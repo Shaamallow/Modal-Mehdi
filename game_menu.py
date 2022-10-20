@@ -16,7 +16,7 @@ red = (255,0,0)
 
 # ENABLE DEBUGGING
 
-debug = True
+debug = False
  
 gameDisplay = pygame.display.set_mode((display_width,display_height))
 pygame.display.set_caption('Modal Mehdi')
@@ -111,11 +111,14 @@ def help_menu():
         gameDisplay.blit(rules_text4_surf, rules_text4_rect)
 
 
-        rules_text5_surf, rules_text5_rect = text_objects("you need to remember the timing of the dots and press the space bar at the right time when a interrogative mark appears", rules_text)
+        rules_text5_surf, rules_text5_rect = text_objects("you need to remember the timing of the dots ", rules_text)
         rules_text5_rect.center = ((display_width/2), (display_height/2 + 100))
         gameDisplay.blit(rules_text5_surf, rules_text5_rect)
 
-
+        rules_text6_surf, rules_text6_rect = text_objects("and press the space bar at the right time when a interrogative mark appears", rules_text)
+        rules_text6_rect.center = ((display_width/2), (display_height/2 + 150))
+        gameDisplay.blit(rules_text6_surf, rules_text6_rect)
+        
 
 
 
@@ -176,6 +179,19 @@ def menu():
         help_button_text_rect.center = ((help_button.left + 100), (help_button.top + 25))
         gameDisplay.blit(help_button_text_surf, help_button_text_rect)
 
+        # create a Results button to display the results of the game (csv file) on top of the screen (top right)
+        # the results button will be a rectangle with text in it
+        # the results button will be the same size with a black border and black text
+        # the results button will be on the top right of the screen
+
+        # create a results button
+        results_button = pygame.Rect(550, 50, 200, 50)
+        pygame.draw.rect(gameDisplay, black, results_button, 2)
+        results_button_text = pygame.font.Font('freesansbold.ttf', 30)
+        results_button_text_surf, results_button_text_rect = text_objects("RESULTS", results_button_text)
+        results_button_text_rect.center = ((results_button.left + 100), (results_button.top + 25))
+        gameDisplay.blit(results_button_text_surf, results_button_text_rect)
+
         # check if the mouse is over the starting button
         if start_button.collidepoint(pygame.mouse.get_pos()):
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -188,6 +204,12 @@ def menu():
                 # if the mouse is over the help button, the help menu is displayed
                 # possible to go back to menu by clicking on the back button or pressing escape
                 help_menu()
+        # check if the mouse is over the results button
+        if results_button.collidepoint(pygame.mouse.get_pos()):
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # if the mouse is over the results button, the results menu is displayed
+                # possible to go back to menu by clicking on the back button or pressing escape
+                results_screen()
 
         # update screen
         pygame.display.update()
@@ -539,7 +561,6 @@ def results_screen():
         results.plot(x="position", y="number_of_users", kind="bar")
         plt.show()
 
-results_screen()
 # Call the game
 menu()
 pygame.quit()
