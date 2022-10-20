@@ -1,3 +1,5 @@
+from turtle import position
+from numpy import number
 import pygame
 import time
 import random
@@ -9,7 +11,12 @@ display_height = 600
  
 black = (0,0,0)
 white = (255,255,255)
+green = (0,255,0)
+red = (255,0,0)
 
+# ENABLE DEBUGGING
+
+debug = False
  
 gameDisplay = pygame.display.set_mode((display_width,display_height))
 pygame.display.set_caption('Modal Mehdi')
@@ -20,8 +27,8 @@ time_between_letters = 1000
 time_letter_visible = 500
 
  
-def text_objects(text, font):
-    textSurface = font.render(text, True, black)
+def text_objects(text, font, color=black):
+    textSurface = font.render(text, True, color)
     return textSurface, textSurface.get_rect()
  
 ##### HELP MENU STARTS HERE #####
@@ -37,7 +44,7 @@ def help_menu():
 
     while help:
         for event in pygame.event.get():
-            print(event)
+            #print(event)
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
@@ -130,7 +137,7 @@ def menu():
         # EVENT HANDLING
 
         for event in pygame.event.get():
-            print(event)
+            #print(event)
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
@@ -194,22 +201,24 @@ def game():
 
     # Verify if no interrupt of the game process
     if gameExit:
-        return
+        return None
 
     gameExit = dot_flash(number_of_dots)
 
     if gameExit:
-        return
+        return None
 
     # get user input used for statistics
     user_input, gameExit = letter_input()
 
     if gameExit:
-        return
+        return None
 
-    
+    # check if the user input is correct
+    position = letter_comparison(random_letters, user_input, number_of_dots)
 
-    # user input is 
+    print(position)
+
 
 def letter_flash():
     
@@ -294,6 +303,12 @@ def letter_flash():
         if (i == number_of_letters) and now-current_time > time_between_letters:
             letterExit = True
 
+    if debug:
+
+        print(random_letters)
+        print(number_of_dots)
+        print(goBackToMenu)
+    
     return (random_letters, number_of_dots, goBackToMenu)
 
 def dot_flash(number_of_dots):
@@ -441,6 +456,52 @@ def letter_input():
                         
     return input_letter, goBackToMenu   
 
+def letter_comparison(random_letters, input_letter, number_of_dots):
+
+    # compare the input letter with the random letters
+    # if the input letter is in the random letters, the input letter will be displayed in green
+    # if the input letter is not in the random letters, the input letter will be displayed in red
+
+    # display a white rectangle at the same place as the question mark
+
+    # gives the position of the input letter in the random letters wich is considered as a "ERROR"
+    # if the input letter is not in the random letters, the position will be NONE
+    # if the input letter is in the random letters, the position will be the distance between the input letter and the correct letter of the random letters
+
+    position = None
+
+    if input_letter in random_letters:
+
+        if input_letter == random_letters[number_of_dots]:
+            position = 0
+        else:
+
+            # position result is a little hazardous if the input letter appears multiple times in the random letters
+            # the position will be the distance between the correct letter (random_letter[number_of_dots]) and the first occurence of the input letter in the random letters
+            # this can be changed with a manual check and getting the position in the array of the input letter closest to the correct letter 
+            # IF SHIFT IN THE RESULTS : add a loop to do the above correction checking the position of correct +- 1 then +- 2 then +- 3 etc
+
+            position = random_letters.index(input_letter) - number_of_dots 
+
+    gameDisplay.fill(white)
+
+    if position == 0:
+        letter_text = pygame.font.Font('freesansbold.ttf', 100)
+        letter_text_surf, letter_text_rect = text_objects(input_letter, letter_text, green)
+        letter_text_rect.center = ((display_width/2), (display_height/2))
+        gameDisplay.blit(letter_text_surf, letter_text_rect)
+        pygame.display.update()
+        pygame.time.wait(1000)
+
+    else:
+        letter_text = pygame.font.Font('freesansbold.ttf', 100)
+        letter_text_surf, letter_text_rect = text_objects(input_letter, letter_text, red)
+        letter_text_rect.center = ((display_width/2), (display_height/2))
+        gameDisplay.blit(letter_text_surf, letter_text_rect)
+        pygame.display.update()
+        pygame.time.wait(1000)
+
+    return position
 
 # Call the game
 menu()
