@@ -1,8 +1,8 @@
-from turtle import position
-from numpy import number
 import pygame
-import time
 import random
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
  
 pygame.init()
  
@@ -16,7 +16,7 @@ red = (255,0,0)
 
 # ENABLE DEBUGGING
 
-debug = False
+debug = True
  
 gameDisplay = pygame.display.set_mode((display_width,display_height))
 pygame.display.set_caption('Modal Mehdi')
@@ -217,7 +217,7 @@ def game():
     # check if the user input is correct
     position = letter_comparison(random_letters, user_input, number_of_dots)
 
-    print(position)
+    write_results(position)
 
 
 def letter_flash():
@@ -503,6 +503,43 @@ def letter_comparison(random_letters, input_letter, number_of_dots):
 
     return position
 
+def write_results(position):
+    # open the results file
+    # its a CSV file with 2 columns : the position, the number of user that had this position
+    # if the position is not in the file, add 
+    # if the position is in the file, add 1 to the number of user that had this position
+
+    # open the file with Pandas
+    results = pd.read_csv("results.csv")
+
+    # if the position is not in the file, add it
+    if position not in results["position"].values:
+        # use pd.concat to add a new row to the file
+        results = pd.concat([results, pd.DataFrame({"position": [position], "number_of_users": [1]})], ignore_index=True)
+
+    # if the position is in the file, add 1 to the number of users
+    else:
+        results.loc[results["position"] == position, "number_of_users"] += 1
+
+    # save the file
+    results.to_csv("results.csv", index=False)
+
+def results_screen():
+    
+        # display the results
+        # the results are a graph with the position on the x axis and the number of users on the y axis
+    
+        # open the file with Pandas
+        results = pd.read_csv("results.csv")
+    
+        # sort the results by position
+        results = results.sort_values(by="position")
+    
+        # display the graph
+        results.plot(x="position", y="number_of_users", kind="bar")
+        plt.show()
+
+results_screen()
 # Call the game
 menu()
 pygame.quit()
