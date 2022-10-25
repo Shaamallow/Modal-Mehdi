@@ -1,2 +1,4 @@
-random_letters,input_letter,position
-"['x', 's', 'p', 'g', 'r', 'x', 'b', 'r']",r,7
+userID, random_letters,input_letter,error,random_letters,position
+1,"['x', 's', 'p', 'g', 'r', 'x', 'b', 'r']",r,0.0,,
+2,,x,,"['f', 'u', 'k', 'h', 'w', 'l', 'x', 'k', 'a']",0.0
+3,,x,,"['y', 't', 'x', 'v', 'h', 'q', 'x', 'h', 'e']",0.0

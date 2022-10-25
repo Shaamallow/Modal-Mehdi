@@ -16,7 +16,7 @@ red = (255,0,0)
 
 # ENABLE DEBUGGING
 
-debug = False
+debug = True
  
 gameDisplay = pygame.display.set_mode((display_width,display_height))
 pygame.display.set_caption('Modal Mehdi')
@@ -127,7 +127,6 @@ def help_menu():
 
 ##### HELP MENU ENDS HERE #####
 
-
 def menu():
 
     # Variable to keep the game running and make it possible to implement a debug mode
@@ -217,6 +216,10 @@ def menu():
 
 def game():
 
+    # get user ID by reading the csv file
+
+    userID = get_userID()
+
     # Timeline of the game
     
     random_letters, number_of_dots, gameExit = letter_flash()
@@ -239,8 +242,13 @@ def game():
     # check if the user input is correct
     position = letter_comparison(random_letters, user_input, number_of_dots)
 
-    logs(random_letters, user_input, number_of_dots)
-    write_results(position)
+
+
+    if position!=None:
+        # if the user input is incorrect, do not save results 
+        logs(userID, random_letters, user_input, position)
+        write_results(position)
+    
 
 
 def letter_flash():
@@ -526,6 +534,17 @@ def letter_comparison(random_letters, input_letter, number_of_dots):
 
     return position
 
+def get_userID():
+    # read the user ID from the logs.csv file
+    # add 1 to the user ID
+    # return the new user ID
+    
+    # open logs.csv with pandas and read the last line
+    logs = pd.read_csv('logs.csv')
+    last_line = logs.tail(1)
+
+    return last_line['userID'].values[0] + 1
+
 def write_results(position):
     # open the results file
     # its a CSV file with 2 columns : the position, the number of user that had this position
@@ -547,17 +566,18 @@ def write_results(position):
     # save the file
     results.to_csv("results.csv", index=False)
 
-def logs(random_letters, input_letter, position):
+def logs(userID, random_letters, input_letter, position):
     # open the logs file
-    # its a CSV file with 3 columns : the random letters, the input letter, the position
-    # add a new row with the random letters, the input letter, the position
+    # its a CSV file with 4 columns : user ID, the random letters, the input letter, the position
+    # add a new row with the user ID, random letters, the input letter, error
     
 
     # open the file with Pandas
     logs = pd.read_csv("logs.csv")
 
+
     # use pd.concat to add a new row to the file
-    logs = pd.concat([logs, pd.DataFrame({"random_letters": [random_letters], "input_letter": [input_letter], "position": [position]})], ignore_index=True)
+    logs = pd.concat([logs, pd.DataFrame({"userID": [userID], "random_letters": [random_letters], "input_letter": [input_letter], "position": [position]})], ignore_index=True)
 
     # save the file
     logs.to_csv("logs.csv", index=False)
