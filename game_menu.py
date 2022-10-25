@@ -1,3 +1,4 @@
+import time
 import pygame
 import random
 import pandas as pd
@@ -16,7 +17,7 @@ red = (255, 0, 0)
 
 # ENABLE DEBUGGING
 
-debug = True
+debug = False
 
 gameDisplay = pygame.display.set_mode((display_width, display_height))
 pygame.display.set_caption('Modal Mehdi')
@@ -97,32 +98,32 @@ def help_menu():
         # create a rules text
         rules_text = pygame.font.Font('freesansbold.ttf', 15)
         rules_text_surf, rules_text_rect = text_objects(
-            "You have to remember the order of the letters and press them in the correct order afterwards", rules_text)
+            "A random amount of letters will appear on the screen", rules_text)
         rules_text_rect.center = ((display_width/2), (display_height/2 - 100))
         gameDisplay.blit(rules_text_surf, rules_text_rect)
 
         rules_text2_surf, rules_text2_rect = text_objects(
-            "a random amount of letters will appear on the screen", rules_text)
+            "You have to remember letters and their order", rules_text)
         rules_text2_rect.center = ((display_width/2), (display_height/2 - 50))
         gameDisplay.blit(rules_text2_surf, rules_text2_rect)
 
         rules_text3_surf, rules_text3_rect = text_objects(
-            "if you press the wrong letter, you lose", rules_text)
+            "Then dots will appear on the screen at same letter's frequency", rules_text)
         rules_text3_rect.center = ((display_width/2), (display_height/2))
         gameDisplay.blit(rules_text3_surf, rules_text3_rect)
 
         rules_text4_surf, rules_text4_rect = text_objects(
-            "the a number of black dots will appear with a specific timing in between them", rules_text)
+            "one of the dots will be a question mark", rules_text)
         rules_text4_rect.center = ((display_width/2), (display_height/2 + 50))
         gameDisplay.blit(rules_text4_surf, rules_text4_rect)
 
         rules_text5_surf, rules_text5_rect = text_objects(
-            "you need to remember the timing of the dots ", rules_text)
+            "each dot represent a letter in the said order", rules_text)
         rules_text5_rect.center = ((display_width/2), (display_height/2 + 100))
         gameDisplay.blit(rules_text5_surf, rules_text5_rect)
 
         rules_text6_surf, rules_text6_rect = text_objects(
-            "and press the space bar at the right time when a interrogative mark appears", rules_text)
+            "you need to input the letter corresponding to the question mark ", rules_text)
         rules_text6_rect.center = ((display_width/2), (display_height/2 + 150))
         gameDisplay.blit(rules_text6_surf, rules_text6_rect)
 
@@ -232,34 +233,41 @@ def game():
 
     userID = get_userID()
 
-    # Timeline of the game
+    # repeat the game automatically for 10 minutes
 
-    random_letters, number_of_dots, gameExit = letter_flash()
+    start_time = time.time()
+    end_time = start_time + 600
 
-    # Verify if no interrupt of the game process
-    if gameExit:
-        return None
+    while time.time() < end_time:
 
-    gameExit = dot_flash(number_of_dots)
+        # Timeline of the game
 
-    if gameExit:
-        return None
+        random_letters, number_of_dots, gameExit = letter_flash()
 
-    # get user input used for statistics
-    user_input, gameExit, time_input = letter_input()
+        # Verify if no interrupt of the game process
+        if gameExit:
+            return None
 
-    if gameExit:
-        return None
+        gameExit = dot_flash(number_of_dots)
 
-    # check if the user input is correct
-    # position isn't an accurate naming, it's the distance between the letter input
-    # and the letter that should have been input (algebraic distance based on the position inside the list)
-    position = letter_comparison(random_letters, user_input, number_of_dots)
+        if gameExit:
+            return None
 
-    if position != None:
-        # if the user input is incorrect, do not save results
-        logs(userID, random_letters, user_input, position, time_input)
-        write_results(position)
+        # get user input used for statistics
+        user_input, gameExit, time_input = letter_input()
+
+        if gameExit:
+            return None
+
+        # check if the user input is correct
+        # position isn't an accurate naming, it's the distance between the letter input
+        # and the letter that should have been input (algebraic distance based on the position inside the list)
+        position = letter_comparison(random_letters, user_input, number_of_dots)
+
+        if position != None:
+            # if the user input is incorrect, do not save results
+            logs(userID, random_letters, user_input, position, time_input)
+            write_results(position)
 
 
 def letter_flash():
