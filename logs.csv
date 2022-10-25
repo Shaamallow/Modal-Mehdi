@@ -1,4 +1,4 @@
-userID, random_letters,input_letter,error,random_letters,position
-1,"['x', 's', 'p', 'g', 'r', 'x', 'b', 'r']",r,0.0,,
-2,,x,,"['f', 'u', 'k', 'h', 'w', 'l', 'x', 'k', 'a']",0.0
-3,,x,,"['y', 't', 'x', 'v', 'h', 'q', 'x', 'h', 'e']",0.0
+userID,random_letters,input_letter,error,time_input
+1,"['d', 'v', 'e', 'g', 'c', 'y', 'h']",v,0,4576
+2,"['r', 'u', 'd', 'w', 's', 'u', 'y']",r,0,1706
+3,"['l', 'z', 'b', 'g', 'i', 'y', 'g', 'p', 'm', 'o']",l,0,2331
