@@ -239,6 +239,7 @@ def game():
     # check if the user input is correct
     position = letter_comparison(random_letters, user_input, number_of_dots)
 
+    logs(random_letters, user_input, number_of_dots)
     write_results(position)
 
 
@@ -530,7 +531,7 @@ def write_results(position):
     # its a CSV file with 2 columns : the position, the number of user that had this position
     # if the position is not in the file, add 
     # if the position is in the file, add 1 to the number of user that had this position
-
+ 
     # open the file with Pandas
     results = pd.read_csv("results.csv")
 
@@ -545,6 +546,21 @@ def write_results(position):
 
     # save the file
     results.to_csv("results.csv", index=False)
+
+def logs(random_letters, input_letter, position):
+    # open the logs file
+    # its a CSV file with 3 columns : the random letters, the input letter, the position
+    # add a new row with the random letters, the input letter, the position
+    
+
+    # open the file with Pandas
+    logs = pd.read_csv("logs.csv")
+
+    # use pd.concat to add a new row to the file
+    logs = pd.concat([logs, pd.DataFrame({"random_letters": [random_letters], "input_letter": [input_letter], "position": [position]})], ignore_index=True)
+
+    # save the file
+    logs.to_csv("logs.csv", index=False)
 
 def results_screen():
     
