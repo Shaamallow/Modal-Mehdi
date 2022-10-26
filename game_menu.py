@@ -158,8 +158,8 @@ def menu():
         # GAME DISPLAY
 
         gameDisplay.fill(white)
-        largeText = pygame.font.Font('freesansbold.ttf', 115)
-        TextSurf, TextRect = text_objects("IQ TEST", largeText)
+        largeText = pygame.font.Font('freesansbold.ttf',80)
+        TextSurf, TextRect = text_objects("Memory Test", largeText)
         TextRect.center = ((display_width/2), (display_height/2))
         gameDisplay.blit(TextSurf, TextRect)
 
