@@ -158,7 +158,7 @@ def menu():
         # GAME DISPLAY
 
         gameDisplay.fill(white)
-        largeText = pygame.font.Font('freesansbold.ttf',80)
+        largeText = pygame.font.Font('freesansbold.ttf', 80)
         TextSurf, TextRect = text_objects("Memory Test", largeText)
         TextRect.center = ((display_width/2), (display_height/2))
         gameDisplay.blit(TextSurf, TextRect)
@@ -238,6 +238,9 @@ def game():
     start_time = time.time()
     end_time = start_time + 600
 
+    # number of try in the same session
+    ID_try = 1
+
     while time.time() < end_time:
 
         # Timeline of the game
@@ -262,12 +265,16 @@ def game():
         # check if the user input is correct
         # position isn't an accurate naming, it's the distance between the letter input
         # and the letter that should have been input (algebraic distance based on the position inside the list)
-        position = letter_comparison(random_letters, user_input, number_of_dots)
+        position = letter_comparison(
+            random_letters, user_input, number_of_dots)
 
         if position != None:
             # if the user input is incorrect, do not save results
-            logs(userID, random_letters, user_input, position, time_input)
+            logs(userID, random_letters, user_input,
+                 position, time_input, number_of_dots, ID_try)
             write_results(position)
+
+        ID_try += 1
 
 
 def letter_flash():
@@ -281,11 +288,11 @@ def letter_flash():
     letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
                "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 
-    # create a list of random letters
-    random_letters = []
-    for i in range(number_of_letters):
-        random_letter = random.choice(letters)
-        random_letters.append(random_letter)
+    # chose without duplicates random letters 
+    # from the list of letters
+    # chose exactly number_of_letters letters
+
+    random_letters = random.sample(letters, number_of_letters)
 
     # generate a random integer lower than the number of letters
     # this will be the number of black dots that will appear on the screen
@@ -567,6 +574,10 @@ def letter_comparison(random_letters, input_letter, number_of_dots):
 
 
 def get_userID():
+
+    # TODO : add a method for user to input his own session ID 
+    # session ID need to be a INT (otherwise need to specify how to automatically generate a random string for user ID)
+
     # read the user ID from the logs.csv file
     # add 1 to the user ID
     # return the new user ID
@@ -605,10 +616,11 @@ def write_results(position):
     results.to_csv("results.csv", index=False)
 
 
-def logs(userID, random_letters, input_letter, error, time_spent):
+def logs(userID, random_letters, input_letter, error, time_spent, number_of_dots, ID_try):
     # open the logs file
-    # its a CSV file with 5 columns : user ID, the random letters, the input letter, the position, time
-    # add a new row with the user ID, random letters, the input letter, error, time
+    # its a CSV file with 8 columns :
+    # user ID, the random letters, the input letter, the position, time, correct_letter, ID-try, cumulative-time
+    # add a new row with relevate information
 
     # open the file with Pandas
     logs = pd.read_csv("logs.csv")
@@ -619,7 +631,9 @@ def logs(userID, random_letters, input_letter, error, time_spent):
         "random_letters": [random_letters],
         "input_letter": [input_letter],
         "error": [error],
-        "time_input": [time_spent]})], ignore_index=True)
+        "time_input": [time_spent],
+        "answer":[random_letters[number_of_dots]],
+        "ID-try":[ID_try]})], ignore_index=True)
 
     # save the file
     logs.to_csv("logs.csv", index=False)
