@@ -145,7 +145,7 @@ def menu():
         # EVENT HANDLING
 
         for event in pygame.event.get():
-            # print(event)
+            print(event)
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
@@ -203,9 +203,10 @@ def menu():
             (results_button.left + 100), (results_button.top + 25))
         gameDisplay.blit(results_button_text_surf, results_button_text_rect)
 
-        # check if the mouse is over the starting button
+        # check if the mouse is over the starting button or click on letter A on the keyboard
+        # if so, start the game
         if start_button.collidepoint(pygame.mouse.get_pos()):
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN or pygame.key.get_pressed()[pygame.K_a]:
                 # if the mouse is over the starting button, the game starts
                 # possible to go back to menu by pressing escape
                 game()
