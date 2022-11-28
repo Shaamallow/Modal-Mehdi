@@ -17,7 +17,7 @@ red = (255, 0, 0)
 
 # ENABLE DEBUGGING
 
-debug = False
+debug = True
 
 gameDisplay = pygame.display.set_mode((display_width, display_height))
 pygame.display.set_caption('Modal Mehdi')
@@ -608,10 +608,14 @@ def write_results(position):
 def logs(userID, random_letters, input_letter, error, time_spent):
     # open the logs file
     # its a CSV file with 5 columns : user ID, the random letters, the input letter, the position, time
-    # add a new row with the user ID, random letters, the input letter, error, time
+    # add a new column with the correct letter
 
     # open the file with Pandas
     logs = pd.read_csv("logs.csv")
+
+    # get correct letter according to input letter and position in the random letters
+    i = random_letters.index(input_letter)
+    correct_letter = random_letters[i + error]
 
     # use pd.concat to add a new row to the file
     logs = pd.concat([logs, pd.DataFrame({
@@ -619,7 +623,9 @@ def logs(userID, random_letters, input_letter, error, time_spent):
         "random_letters": [random_letters],
         "input_letter": [input_letter],
         "error": [error],
-        "time_input": [time_spent]})], ignore_index=True)
+        "time_input": [time_spent],
+        "correct_letter": [correct_letter]
+        })], ignore_index=True)
 
     # save the file
     logs.to_csv("logs.csv", index=False)
